@@ -1,0 +1,22 @@
+version: 1
+environments:
+  dev:
+    workspace_name: ADB-DataPipeline-Dev
+    databricks_host: https://adb-dev-example.azuredatabricks.net
+    notebook_path: /Repos/adb-user/ADB-Datapipeline/notebooks/sample_datapipeline
+    job_name: sample-data-pipeline-notebook-job
+    cluster_id: ADB_CLUSTER_ID_DEV
+    azure_key_vault:
+      uri: ${AZURE_KEY_VAULT_URI}
+      secrets:
+        databricks_token: databricks-token-dev
+  prod:
+    workspace_name: ADB-DataPipeline-Prod
+    databricks_host: https://adb-prod-example.azuredatabricks.net
+    notebook_path: /Repos/adb-user/ADB-Datapipeline/notebooks/sample_datapipeline
+    job_name: sample-data-pipeline-notebook-job
+    cluster_id: ADB_CLUSTER_ID_PROD
+    azure_key_vault:
+      uri: ${AZURE_KEY_VAULT_URI}
+      secrets:
+        databricks_token: databricks-token-prod

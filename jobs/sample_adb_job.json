@@ -1,0 +1,12 @@
+{
+  "name": "sample-data-pipeline-notebook-job",
+  "existing_cluster_id": "ADB_CLUSTER_ID_PLACEHOLDER",
+  "notebook_task": {
+    "notebook_path": "/Repos/adb-user/ADB-Datapipeline/notebooks/sample_datapipeline"
+  },
+  "max_retries": 1,
+  "timeout_seconds": 3600,
+  "email_notifications": {
+    "on_failure": ["team@datapipeline.example.com"]
+  }
+}

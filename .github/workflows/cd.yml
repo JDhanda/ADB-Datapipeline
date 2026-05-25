@@ -1,0 +1,69 @@
+name: ADB Data Pipeline CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - prod
+      change_request:
+        description: 'Is this a change request?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      release_tag:
+        description: 'Optional release tag for deployment'
+        required: false
+        default: ''
+
+jobs:
+  deploy:
+    name: Deploy ADB Workspace
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Fetch secrets from Azure Key Vault
+        uses: azure/get-keyvault-secrets@v1
+        with:
+          keyvault: ${{ secrets.AZURE_KEY_VAULT_NAME }}
+          secrets: |
+            databricks-token-dev
+            databricks-token-prod
+
+      - name: Deploy to Azure Databricks
+        env:
+          TARGET_ENV: ${{ github.event.inputs.environment }}
+          DATABRICKS_HOST_DEV: ${{ secrets.DATABRICKS_HOST_DEV }}
+          DATABRICKS_HOST_PROD: ${{ secrets.DATABRICKS_HOST_PROD }}
+          DATABRICKS_TOKEN_DEV: ${{ secrets.DATABRICKS_TOKEN_DEV }}
+          DATABRICKS_TOKEN_PROD: ${{ secrets.DATABRICKS_TOKEN_PROD }}
+          CHANGE_REQUEST: ${{ github.event.inputs.change_request }}
+          RELEASE_TAG: ${{ github.event.inputs.release_tag }}
+        run: |
+          python scripts/deploy_adb_workspace.py
