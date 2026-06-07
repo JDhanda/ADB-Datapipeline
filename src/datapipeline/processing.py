@@ -3,10 +3,11 @@ from typing import List, Dict
 
 def transform_record(record: Dict[str, object]) -> Dict[str, object]:
     """Apply basic transformation rules to a record."""
+    original_value = record.get("value")
     transformed = {
         "id": record.get("id"),
-        "value": float(record.get("value", 0)) * 1.1,
-        "status": "valid" if record.get("value", 0) is not None else "invalid",
+        "value": float(original_value) * 1.1 if original_value is not None else 0.0,
+        "status": "valid" if original_value is not None else "invalid",
     }
     return transformed
 
