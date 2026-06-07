@@ -6,7 +6,11 @@ def transform_record(record: Dict[str, object]) -> Dict[str, object]:
     original_value = record.get("value")
     transformed = {
         "id": record.get("id"),
-        "value": float(original_value) * 1.1 if original_value is not None else 0.0,
+        "value": (
+            float(original_value) * 1.1
+            if original_value is not None
+            else 0.0
+        ),
         "status": "valid" if original_value is not None else "invalid",
     }
     return transformed
